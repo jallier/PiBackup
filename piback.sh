@@ -14,22 +14,22 @@ source settings.cfg
 # Send all output to log file
 exec >> $logfile
 
-echo "Starting script..."
+echo "$(date) - Starting script..."
 
 # Check if the destination folder exists
 if [ ! -d "$dest" ]; then
-	echo "$dest does not exist; please check config and try again"
+	echo "$(date) - $dest does not exist; please check config and try again"
 	exit 1
 else
-	echo $dest exists
+	echo "$(date) - $dest exists"
 fi
 
 # And check if the source folder exists
 if [ ! -d "$source" ]; then
-	echo "$source does not exist; please check config and try again"
+	echo "$(date) - $source does not exist; please check config and try again"
 	exit 1
 else
-	echo $source exists
+	echo "$(date) - $source exists"
 fi
 
 # Pushbullet function
@@ -37,12 +37,12 @@ push (){
 	if [ "$3" != "-d" ] && [ "$apikey" != "" ]; then
 		curl --header 'Access-Token:'"$apikey" https://api.pushbullet.com/v2/pushes --request POST --header 'Content-Type:application/json' --data-binary '{"body":"'"$2"'","title":"'"$1"'","type":"note"}' -s > /dev/null
 	else
-		echo "Push function disabled during testing"
+		echo "$(date) - Push function disabled during testing"
 	fi
 }
 
 echo
-echo "Beginning sync..."
+echo "$(date) - Beginning sync..."
 
 # Send pushbullet push
 push "Rsync started" "Copying $source to $dest" "$1"
@@ -50,13 +50,13 @@ push "Rsync started" "Copying $source to $dest" "$1"
 if [ "$1" != "-d" ]; then
 	temp=$(rsync -avzhP --stats "$source" "$dest") 
 else
-	echo "Debug mode on; doing a dry run"
+	echo "$(date) - Debug mode on; doing a dry run"
 	temp=$(rsync -avzhP --stats "$source" "$dest" --dry-run)
 	echo
 fi
 
 echo "$temp"
-echo "Sync complete"
+echo "$(date) - Sync complete"
 
 push "Completed sync" "" "$1"
 echo
@@ -71,6 +71,8 @@ if [ "$email_to" != "" ]; then
 
 	# Then send it using file redirection
 	ssmtp "$email_to"<mail.txt
+	echo "$(date) - Email sent"
 else
-	echo "No email address given for recipient; not sending email report"
+	echo "$(date) - No email address given for recipient; not sending email report"
 fi
+echo "$(date) - Script exiting"
