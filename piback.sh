@@ -7,6 +7,8 @@
 # You can use the -d flag for testing your file paths. This will run rsync in dry-run mode so no data will be moved.
 
 # Get variables from config
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$DIR"
 source settings.cfg
 
 # Send all output to log file
