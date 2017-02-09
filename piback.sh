@@ -12,7 +12,7 @@ cd "$DIR"
 source settings.cfg
 
 # Send all output to log file
-#exec >> $logfile
+exec >> $logfile
 
 echo "Starting script..."
 
@@ -34,7 +34,7 @@ fi
 
 # Pushbullet function
 push (){
-	if [ "$1" != "-d" ] && [ "$apikey" != "" ]; then
+	if [ "$3" != "-d" ] && [ "$apikey" != "" ]; then
 		curl --header 'Access-Token:'"$apikey" https://api.pushbullet.com/v2/pushes --request POST --header 'Content-Type:application/json' --data-binary '{"body":"'"$2"'","title":"'"$1"'","type":"note"}' -s > /dev/null
 	else
 		echo "Push function disabled during testing"
@@ -45,7 +45,7 @@ echo
 echo "Beginning sync..."
 
 # Send pushbullet push
-push "Rsync started" "Copying $source to $dest"
+push "Rsync started" "Copying $source to $dest" "$1"
 
 if [ "$1" != "-d" ]; then
 	temp=$(rsync -avzhP --stats "$source" "$dest") 
@@ -58,7 +58,7 @@ fi
 echo "$temp"
 echo "Sync complete"
 
-push "Completed sync" ""
+push "Completed sync" "" "$1"
 echo
 
 # Send the email if an address is given
