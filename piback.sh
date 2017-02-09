@@ -70,7 +70,7 @@ if [ "$email_to" != "" ]; then
 	echo "$mail_output">mail.txt
 
 	# Then send it using file redirection
-	ssmtp "$email_to"<mail.txt
+	/usr/sbin/ssmtp "$email_to"<mail.txt
 	echo "$(date) - Email sent"
 else
 	echo "$(date) - No email address given for recipient; not sending email report"
